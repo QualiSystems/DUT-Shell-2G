@@ -1,13 +1,16 @@
-from cloudshell.devices.autoload.autoload_builder import AutoloadDetailsBuilder
-from cloudshell.devices.standards.networking.autoload_structure import GenericResource, \
-    GenericChassis, GenericModule, GenericPort
-from cloudshell.shell.core.interfaces.save_restore import OrchestrationSaveResult
+from cloudshell.shell.core.driver_utils import GlobalLock
 from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterface
-from cloudshell.shell.core.driver_context import InitCommandContext, ResourceCommandContext, \
-    AutoLoadDetails, CancellationContext
+from cloudshell.shell.core.session.logging_session import LoggingSessionContext
+from cloudshell.shell.standards.networking.autoload_model import NetworkingResourceModel
+from cloudshell.shell.standards.networking.driver_interface import (
+    NetworkingResourceDriverInterface
+)
+from cloudshell.shell.standards.networking.resource_config import (
+    NetworkingResourceConfig
+)
 
 
-class DutShell2GDriver (ResourceDriverInterface):
+class DutShell2GDriver (ResourceDriverInterface, NetworkingResourceDriverInterface):
     SHELL_NAME = 'DutShell2G'
 
     def __init__(self):
@@ -123,6 +126,7 @@ class DutShell2GDriver (ResourceDriverInterface):
         """
         pass
 
+    @GlobalLock.lock
     def get_inventory(self, context):
         """
         Discovers the resource structure and attributes.
@@ -130,21 +134,28 @@ class DutShell2GDriver (ResourceDriverInterface):
         :return Attribute and sub-resource information for the Shell resource you can return an AutoLoadDetails object
         :rtype: AutoLoadDetails
         """
+        with LoggingSessionContext(context):
+            resource_config = NetworkingResourceConfig.from_context(
+                self.SHELL_NAME, context
+            )
+            resource_model = NetworkingResourceModel.from_resource_config(
+                resource_config
+            )
+            resource_model.system_name = "DUT device"
+            resource_model.connect_chassis()
 
-        resource = GenericResource(self.SHELL_NAME, context.resource.name, context.resource.name)
+            chassis1 = resource_model.entities.Chassis(index=1)
+            resource_model.connect_chassis(chassis1)
 
-        chassis1 = GenericChassis(self.SHELL_NAME, 'Chassis 1', 'ch-1')
-        resource.add_sub_resource('1', chassis1)
+            module1 = resource_model.entities.Module(index=1)
+            chassis1.connect_module(module1)
 
-        module1 = GenericModule(self.SHELL_NAME, 'Module 1', 'm-1')
-        chassis1.add_sub_resource('1', module1)
+            port1 = resource_model.entities.Port(index=1)
+            port2 = resource_model.entities.Port(index=2)
+            module1.connect_port(port1)
+            module1.connect_port(port2)
 
-        port1 = GenericPort(self.SHELL_NAME, 'Port 1', 'p-1')
-        port2 = GenericPort(self.SHELL_NAME, 'Port 2', 'p-2')
-        module1.add_sub_resource('1', port1)
-        module1.add_sub_resource('2', port2)
-
-        return AutoloadDetailsBuilder(resource).autoload_details()
+        return resource_model.build()
 
     def health_check(self,cancellation_context):
         """
