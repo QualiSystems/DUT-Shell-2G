@@ -142,7 +142,6 @@ class DutShell2GDriver (ResourceDriverInterface, NetworkingResourceDriverInterfa
                 resource_config
             )
             resource_model.system_name = "DUT device"
-            resource_model.connect_chassis()
 
             chassis1 = resource_model.entities.Chassis(index=1)
             resource_model.connect_chassis(chassis1)
