@@ -1,3 +1,2 @@
-cloudshell-shell-core>=4.0,<5
-cloudshell-networking>=5.1,<5.2
-cloudshell-networking-devices>=2.5,<2.6
+cloudshell-shell-core>=5.0,<6
+cloudshell-shell-networking-standard==5.0.4
