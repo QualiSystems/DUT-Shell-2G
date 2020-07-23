@@ -15,13 +15,13 @@ jobs:
       before_deploy:
         - export AUTHOR_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
         - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
-        - export GIT_TAG="$(yq -r .metadata.template_version shell-definition.yaml)"
         - git config --local user.name $AUTHOR_NAME
         - git config --local user.email $AUTHOR_EMAIL
-        - git tag $GIT_TAG
+        - git tag $VERSION
       script:
         - tox
-        - mv dist/dependencies.zip dist/dut-dependencies-package-$GIT_TAG.$TRAVIS_BUILD_NUMBER.zip
+        - export VERSION="$(yq -r .metadata.template_version shell-definition.yaml)"
+        - mv dist/dependencies.zip dist/dut-dependencies-package-$VERSION.$TRAVIS_BUILD_NUMBER.zip
       deploy:
         provider: releases
         skip_cleanup: true
