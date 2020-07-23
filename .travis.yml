@@ -3,6 +3,8 @@ python: 3.7
 jobs:
   include:
     - env: TOXENV=pre-commit
+      script: tox
+      install: pip install tox
     - stage: Create GitHub release
       before_install:
         - sudo apt-get update
@@ -17,6 +19,9 @@ jobs:
         - git config --local user.name $AUTHOR_NAME
         - git config --local user.email $AUTHOR_EMAIL
         - git tag $GIT_TAG
+      script:
+        - tox
+        - mv dist/dependencies.zip dist/dut-dependencies-package-$GIT_TAG.$TRAVIS_BUILD_NUMBER.zip
       deploy:
         provider: releases
         skip_cleanup: true
@@ -39,11 +44,6 @@ jobs:
         - cd $TRAVIS_REPO_SLUG
         - git checkout -qf $TRAVIS_PULL_REQUEST_BRANCH
       script: "! diff <(yq .metadata.template_version shell-definition.yaml) <(git show master:shell-definition.yaml > tmp.yaml && yq .metadata.template_version tmp.yaml)"
-
-install:
-  - pip install tox
-
-script: tox
 
 stages:
   - name: Check version
