@@ -42,6 +42,7 @@ jobs:
           echo "REPO=$repo" >> $GITHUB_ENV
       - name: Pack dependencies
         run: |
+          mkdir -p dist  # if we don't pack Shell the folder will not be created
           zip -j dist/cloudshell-$REPO-dependencies-win-package-$TAG.zip windows-dependencies/*
           zip -j dist/cloudshell-$REPO-dependencies-linux-package-$TAG.zip linux-dependencies/*
       - name: Create GitHub release
