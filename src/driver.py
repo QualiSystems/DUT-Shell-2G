@@ -21,12 +21,21 @@ class DutShell2GDriver(ResourceDriverInterface, NetworkingResourceDriverInterfac
         pass
 
     def restore(
-        self, context, path, configuration_type, restore_method, vrf_management_name,
+        self,
+        context,
+        path,
+        configuration_type,
+        restore_method,
+        vrf_management_name,
     ):
         pass
 
     def save(
-        self, context, folder_path, configuration_type, vrf_management_name,
+        self,
+        context,
+        folder_path,
+        configuration_type,
+        vrf_management_name,
     ):
         pass
 
