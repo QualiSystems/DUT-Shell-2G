@@ -58,3 +58,4 @@ jobs:
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true
+          updateOnlyUnreleased: ${{ inputs.update == false }}
