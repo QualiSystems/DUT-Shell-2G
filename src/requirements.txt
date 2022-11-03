@@ -1,3 +1,2 @@
 cloudshell-shell-core>=5.0,<6
 cloudshell-shell-networking-standard==5.0.4
-cloudshell-cli
