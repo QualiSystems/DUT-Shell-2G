@@ -5,6 +5,6 @@ jobs:
     uses: QualiSystems/.github/.github/workflows/shell-py-37-39.yml@master
   github-release:
     needs: shell-ci
-    uses: ./.github/workflows/create-release.yml
+    uses: QualiSystems/.github/.github/workflows/shell-github-release.yml@master
     with:
       update: true
