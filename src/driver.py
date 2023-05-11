@@ -2,6 +2,7 @@ from cloudshell.shell.core.driver_context import AutoLoadCommandContext, AutoLoa
 from cloudshell.shell.core.driver_utils import GlobalLock
 from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterface
 from cloudshell.shell.core.session.logging_session import LoggingSessionContext
+from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 from cloudshell.shell.standards.networking.autoload_model import NetworkingResourceModel
 from cloudshell.shell.standards.networking.driver_interface import (
     NetworkingResourceDriverInterface,
@@ -64,9 +65,8 @@ class DutShell2GDriver(ResourceDriverInterface, NetworkingResourceDriverInterfac
     def get_inventory(self, context: AutoLoadCommandContext) -> AutoLoadDetails:
         """Create a resource structure."""
         with LoggingSessionContext(context):
-            resource_config = NetworkingResourceConfig.from_context(
-                self.SHELL_NAME, context
-            )
+            api = CloudShellSessionContext(context).get_api()
+            resource_config = NetworkingResourceConfig.from_context(context, api)
             resource_model = NetworkingResourceModel.from_resource_config(
                 resource_config
             )
